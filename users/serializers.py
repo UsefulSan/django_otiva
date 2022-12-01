@@ -1,6 +1,11 @@
+
+
 from rest_framework import serializers
 
 from users.models import Users, Locations
+
+
+
 
 
 class UsersCreateSerializer(serializers.ModelSerializer):

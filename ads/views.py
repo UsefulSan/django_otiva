@@ -16,7 +16,7 @@ from rest_framework.permissions import IsAuthenticated
 from ads.models import Categories, Ads, Selection
 from ads.permissions import SelectionUpdatePermission, AdsUpdatePermission
 from ads.serializers import AdDetailViewSerializer, SelectionViewSerializer, SelectionDetailViewSerializer, \
-    SelectionCreateViewSerializer, AdDeleteViewSerializer
+    SelectionCreateViewSerializer, AdDeleteViewSerializer, AdCreateViewSerializer
 from users.models import Locations, Users
 
 
@@ -211,25 +211,31 @@ class AdDetailView(RetrieveAPIView):
     permission_classes = [IsAuthenticated]
 
 
-@api_view(["POST"])
-@permission_classes([IsAuthenticated])
-def AdCreateView(request, *args, **kwargs):
-    ad_data = json.loads(request.body)
-    author = Users.objects.get(pk=ad_data["author_id"])
-    category = Categories.objects.get(pk=ad_data["category_id"])
-    ad = Ads.objects.create(
-        name=ad_data["name"],
-        author=author,
-        price=ad_data["price"],
-        description=ad_data["description"],
-        is_published=ad_data["is_published"],
-        category=category
-    )
-    return JsonResponse({
-        "status": "ok",
-        "name": ad.name,
-        "author": ad.author.first_name
-    })
+class ADCreateView(CreateAPIView):
+    queryset = Ads.objects.all()
+    serializer_class = AdCreateViewSerializer
+    permission_classes = [IsAuthenticated]
+
+
+# @api_view(["POST"])
+# @permission_classes([IsAuthenticated])
+# def AdCreateView(request, *args, **kwargs):
+#     ad_data = json.loads(request.body)
+#     author = Users.objects.get(pk=ad_data["author_id"])
+#     category = Categories.objects.get(pk=ad_data["category_id"])
+#     ad = Ads.objects.create(
+#         name=ad_data["name"],
+#         author=author,
+#         price=ad_data["price"],
+#         description=ad_data["description"],
+#         is_published=ad_data["is_published"],
+#         category=category
+#     )
+#     return JsonResponse({
+#         "status": "ok",
+#         "name": ad.name,
+#         "author": ad.author.first_name
+#     })
 
 
 class AdDeleteApiView(DestroyAPIView):
