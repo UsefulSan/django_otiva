@@ -4,9 +4,18 @@ from ads.models import Ads, Selection, Categories
 from users.models import Users
 
 
-def check_false(value):
-    if value:
-        raise serializers.ValidationError('The ad cannot be published at the time of creation')
+class CheckFalse:
+    def __call__(self, value):
+        if value:
+            raise serializers.ValidationError('The ad cannot be published at the time of creation')
+
+
+class CategoriesViewSerializer(serializers.ModelSerializer):
+    slug = serializers.SlugField(min_length=5)
+
+    class Meta:
+        model = Categories
+        fields = '__all__'
 
 
 class AdDetailViewSerializer(serializers.ModelSerializer):
@@ -21,7 +30,8 @@ class AdDetailViewSerializer(serializers.ModelSerializer):
 class AdCreateViewSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(slug_field='id', queryset=Categories.objects.all())
     author = serializers.SlugRelatedField(slug_field='id', queryset=Users.objects.all())
-    is_published = serializers.BooleanField(validators=[check_false])
+    is_published = serializers.BooleanField(validators=[CheckFalse])
+    name = serializers.CharField(min_length=10)
 
     class Meta:
         model = Ads
