@@ -21,6 +21,7 @@ from rest_framework import routers
 
 from ads import views
 from users import views as v
+from datasets.fill_scripts import *
 
 router = routers.SimpleRouter()
 router.register('locations', v.LocationsViewSet)
@@ -32,10 +33,10 @@ urlpatterns = [
     path('ads/', include("ads.urls")),
     path('users/', include("users.urls")),
 
-    path('fill_users/', views.fill_users_db),
-    path('fill_categories/', views.fill_categories_db),
-    path('fill_locations/', views.fill_location_db),
-    path('fill_ads/', views.fill_ads_db)
+    path('fill_users/', fill_users_db),
+    path('fill_categories/', fill_categories_db),
+    path('fill_locations/', fill_location_db),
+    path('fill_ads/', fill_ads_db)
 ]
 
 urlpatterns += router.urls
