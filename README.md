@@ -8,6 +8,7 @@ Django REST API для интернет-магазина.
 2. Реализована ролевая система
 3. Настроена админ-панель
 4. Реализована возможность создавать подборки пользователями
+5. Добавлены авто-тесты 
 
 ## Brief description ##
 
@@ -19,3 +20,4 @@ Django REST API for an online store.
 2. Role system implemented
 3. Admin panel is now configured
 4. Implemented the possibility to create selections by users
+5. Added auto-tests
