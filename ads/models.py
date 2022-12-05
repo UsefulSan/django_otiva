@@ -26,8 +26,8 @@ class Ads(models.Model):
     author = models.ForeignKey(Users, on_delete=models.CASCADE)
     price = models.IntegerField(validators=[check_non_negative_number])
     description = models.CharField(max_length=500, null=True)
-    is_published = models.BooleanField()
-    image = models.ImageField(upload_to="images/")
+    is_published = models.BooleanField(default=False)
+    image = models.ImageField(upload_to="images/", null=True)
     category = models.ForeignKey(Categories, on_delete=models.CASCADE)
 
     def __str__(self):
