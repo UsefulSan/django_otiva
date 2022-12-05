@@ -1,6 +1,22 @@
 import factory.django
 
-from ads.models import Ads
+from ads.models import Ads, Categories
+from users.models import Users
+
+
+class UserFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Users
+
+    username = factory.Faker('name')
+    password = 'passwordTestFactory'
+
+
+class CategoryFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Categories
+
+    name = factory.Faker('name')
 
 
 class AdFactory(factory.django.DjangoModelFactory):
@@ -8,8 +24,7 @@ class AdFactory(factory.django.DjangoModelFactory):
         model = Ads
 
     name = factory.Faker('name')
-    author = 'author'
-    price = 100
+    category = factory.SubFactory(CategoryFactory)
+    author = factory.SubFactory(UserFactory)
     is_published = False
-    image = '1234'
-    category = 'Котики'
+    price = 100

@@ -5,8 +5,11 @@ from users.models import Users
 
 
 class CheckFalse:
-    def __call__(self, value):
-        if value:
+    def __init__(self, value):
+        self.value = value
+
+    def __call__(self):
+        if self.value:
             raise serializers.ValidationError('The ad cannot be published at the time of creation')
 
 
