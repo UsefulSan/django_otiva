@@ -2,11 +2,9 @@ import json
 
 import pytest
 
-
 from ads.models import Categories
-from ads.serializers import AdDetailViewSerializer
+from ads.serializers import AdListViewSerializer, AdDetailViewSerializer
 from tests.factories import AdFactory
-from users.models import Users
 
 
 @pytest.mark.django_db
@@ -34,14 +32,22 @@ def test_create_ads(client, user_token):
 
 @pytest.mark.django_db
 def test_list_ads(client):
-    ads = AdFactory.create_batch(21)
+    ads = AdFactory.create_batch(10)
     expected_response = {
-        "items": AdDetailViewSerializer(ads, many=True).data,
-        "page": 1,
-        "num_pages": 3,
-        "total": 21
+        "count": 10,
+        "next": None,
+        "previous": None,
+        "results": AdListViewSerializer(ads, many=True).data
     }
     response = client.get('/ads/', safe=False)
-    jsonresponse = {'items': response.json().get('items'), }
     assert response.status_code == 200
-    assert response == expected_response
+    assert response.data == expected_response
+
+
+@pytest.mark.django_db
+def test_retrieve_ads(client, user_token):
+    ad = AdFactory.create()
+    expected_response = AdDetailViewSerializer(ad).data
+    response = client.get(f'/ads/{ad.pk}/', HTTP_AUTHORIZATION="Bearer " + user_token)
+    assert response.status_code == 200
+    assert response.data == expected_response

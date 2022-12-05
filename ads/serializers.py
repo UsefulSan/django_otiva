@@ -5,11 +5,8 @@ from users.models import Users
 
 
 class CheckFalse:
-    def __init__(self, value):
-        self.value = value
-
-    def __call__(self):
-        if self.value:
+    def __call__(self, value):
+        if value:
             raise serializers.ValidationError('The ad cannot be published at the time of creation')
 
 
@@ -19,6 +16,14 @@ class CategoriesViewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Categories
         fields = '__all__'
+
+
+class AdListViewSerializer(serializers.ModelSerializer):
+    category = serializers.SlugRelatedField(slug_field='name', read_only=True)
+
+    class Meta:
+        model = Ads
+        fields = ['name', 'category']
 
 
 class AdDetailViewSerializer(serializers.ModelSerializer):
@@ -33,7 +38,7 @@ class AdDetailViewSerializer(serializers.ModelSerializer):
 class AdCreateViewSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(slug_field='id', queryset=Categories.objects.all())
     author = serializers.SlugRelatedField(slug_field='id', queryset=Users.objects.all())
-    is_published = serializers.BooleanField(validators=[CheckFalse])
+    is_published = serializers.BooleanField(validators=[CheckFalse()])
     name = serializers.CharField(min_length=10)
 
     class Meta:
@@ -42,9 +47,6 @@ class AdCreateViewSerializer(serializers.ModelSerializer):
 
 
 class AdDeleteViewSerializer(serializers.ModelSerializer):
-    # category = serializers.SlugRelatedField(slug_field='name', read_only=True)
-    # author = serializers.SlugRelatedField(slug_field='first_name', read_only=True)
-
     class Meta:
         model = Ads
         exclude = ['author']

@@ -12,7 +12,8 @@ from rest_framework.viewsets import ModelViewSet
 from ads.models import Categories, Ads, Selection
 from ads.permissions import SelectionUpdatePermission, AdsUpdatePermission
 from ads.serializers import AdDetailViewSerializer, SelectionViewSerializer, SelectionDetailViewSerializer, \
-    SelectionCreateViewSerializer, AdDeleteViewSerializer, AdCreateViewSerializer, CategoriesViewSerializer
+    SelectionCreateViewSerializer, AdDeleteViewSerializer, AdCreateViewSerializer, CategoriesViewSerializer, \
+    AdListViewSerializer
 
 
 @csrf_exempt
@@ -25,47 +26,32 @@ class CategoriesViewSet(ModelViewSet):
     serializer_class = CategoriesViewSerializer
 
 
-class AdsListView(ListView):
-    model = Ads
+class AdsListView(ListAPIView):
+    # model = Ads
+    queryset = Ads.objects.all()
+    serializer_class = AdListViewSerializer
 
     def get(self, request, *args, **kwargs):
-        queryset = Ads.objects.select_related("author", "category").all().order_by("-price")
-        category_search = request.GET.get('cat', None)
-        if category_search:
-            queryset = queryset.filter(category__id__icontains=category_search)
-        ads_search = request.GET.get('text', None)
-        if ads_search:
-            queryset = queryset.filter(name__icontains=ads_search)
-        place_search = request.GET.get('location', None)
-        if place_search:
-            queryset = queryset.filter(author__location__name__icontains=place_search)
-        price_from, price_to = request.GET.get('price_from', None), request.GET.get('price_to', None)
-        if price_from and price_to:
-            queryset = queryset.filter(price__range=(price_from, price_to))
+        ad_cat = request.GET.get('cat')
+        if ad_cat:
+            self.queryset = self.queryset.filter(category__id__exact=ad_cat)
 
-        paginator = Paginator(queryset, settings.TOTAL_ON_PAGE)
-        page_num = int(request.GET.get("page", 1))
-        page_obj = paginator.get_page(page_num)
+        ad_name = request.GET.get('text')
+        if ad_name:
+            self.queryset = self.queryset.filter(name__icontains=ad_name)
 
-        ads = []
-        for ad in page_obj:
-            ads.append({
-                'id': ad.id,
-                'name': ad.name,
-                'author': ad.author.first_name,
-                'price': ad.price,
-                'description': ad.description,
-                'is_published': ad.is_published,
-                'image': ad.image.url if ad.image else None,
-                'category': ad.category.name
-            })
-        response = {
-            "items": ads,
-            "page": page_num,
-            "num_pages": paginator.num_pages,
-            "total": paginator.count
-        }
-        return JsonResponse(response, safe=False)
+        ad_city = request.GET.get('location')
+        if ad_city:
+            self.queryset = self.queryset.filter(
+                author__location__name__icontains=ad_city)
+
+        price_from = request.GET.get('price_from', 0)
+        price_to = request.GET.get('price_to', 100000)
+        if price_from or price_to:
+            self.queryset = self.queryset.filter(
+                price__range=[price_from, price_to])
+
+        return super().get(request, *args, **kwargs)
 
 
 class AdDetailView(RetrieveAPIView):
