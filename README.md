@@ -1,3 +1,15 @@
+[![Python](https://img.shields.io/badge/-Python-464646?style=flat-square&logo=Python)](https://www.python.org/)
+![Pytest](https://img.shields.io/badge/-pytest-464646?style=flat-square&logo=Pytest)
+![PostgreSQL](https://img.shields.io/badge/-PostgreSQL-05122A?style=flat&logo=PostgreSQL)&nbsp;
+
+## Для запуска приложения:
+ - клонировать репозиторий git clone https://github.com/UsefulSan/django_otiva.git
+ - добавить python интерпретатор 
+ - установите зависимости `pip freeze > requirements.txt`
+ - создать бд или подключиться к имеющейся в репозитории
+ - запустить `python manage.py createsuperuser`
+              `python manage.py runserver` 
+
 ## Краткое описание ##
 
 Django REST API для интернет-магазина.
