@@ -3,7 +3,7 @@
 ![PostgreSQL](https://img.shields.io/badge/-PostgreSQL-05122A?style=flat&logo=PostgreSQL)&nbsp;
 
 ## Для запуска приложения:
- - клонировать репозиторий git clone https://github.com/UsefulSan/django_otiva.git
+ - клонировать репозиторий `git clone https://github.com/UsefulSan/django_otiva.git`
  - добавить python интерпретатор 
  - установите зависимости `pip freeze > requirements.txt`
  - создать бд или подключиться к имеющейся в репозитории
